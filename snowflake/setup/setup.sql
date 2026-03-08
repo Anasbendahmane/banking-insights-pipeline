@@ -19,3 +19,49 @@ DROP schema banking_db.PUBLIC;
 create role if not exists rl_analyst;
 create role if not exists rl_dbt;
 create role if not exists rl_ingestion;
+
+--grant PRIVILEGES
+--------rl_ingestion
+GRANT USAGE on warehouse banking_warehouse to role rl_ingestion;
+GRANT USAGE on database banking_db to role rl_ingestion;
+GRANT usage ,create pipe , create task ,create procedure, create table, create stage on schema banking_db.RAW to role rl_ingestion;
+GRANT select , insert on future tables in schema banking_db.RAW to role rl_ingestion;
+
+--------rl_dbt
+GRANT USAGE ON WAREHOUSE banking_warehouse to role rl_dbt;
+GRANT USAGE ON database banking_db to role rl_dbt;
+--raw schema
+GRANT USAGE ON SCHEMA banking_db.raw to role rl_dbt;
+GRANT SELECT ON FUTURE TABLES IN SCHEMA banking_db.raw to role rl_dbt;
+--staging schema
+GRANT USAGE , CREATE TABLE ,CREATE VIEW on schema banking_db.staging to role rl_dbt;
+GRANT SELECT , insert ON FUTURE TABLES in SCHEMA banking_db.staging to role rl_dbt;
+--marts schema
+GRANT USAGE ,create table,create view on schema banking_db.marts to role rl_dbt;
+GRANT select , insert on future tables in schema banking_db.marts to role rl_dbt;
+-- snapshots schema 
+GRANT USAGE ,create table on schema banking_db.snapshots to role rl_dbt;
+GRANT select,insert on future tables in schema banking_db.snapshots to role rl_dbt;
+
+-- rl_analyst
+GRANT USAGE ON WAREHOUSE banking_warehouse to role rl_analyst;
+GRANT USAGE ON DATABASE banking_db to role rl_analyst;
+GRANT USAGE ON SCHEMA banking_db.staging to role rl_analyst;
+GRANT USAGE ON SCHEMA banking_db.marts to role rl_analyst;
+GRANT SELECT ON FUTURE TABLES on schema banking_db.marts to role rl_analyst;
+GRANT SELECT ON FUTURE TABLES on schema banking_db.staging to role rl_analyst;
+GRANT SELECT ON FUTURE VIEWS ON SCHEMA banking_db.marts to role rl_analyst;
+GRANT SELECT ON FUTURE VIEWS ON SCHEMA banking_db.staging to role rl_analyst;
+
+
+--- create users
+create user usr_ingestion ;
+create user usr_dbt ;
+create user usr_analyst ;
+
+-- GRANT roles to users
+
+GRANT ROLE rl_ingestion to user usr_ingestion;
+GRANT ROLE rl_dbt to user usr_dbt;
+GRANT ROLE rl_analyst to user usr_analyst;
+
