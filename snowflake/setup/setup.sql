@@ -53,10 +53,10 @@ GRANT USAGE ON WAREHOUSE banking_warehouse to role rl_analyst;
 GRANT USAGE ON DATABASE banking_db to role rl_analyst;
 GRANT USAGE ON SCHEMA banking_db.staging to role rl_analyst;
 GRANT USAGE ON SCHEMA banking_db.marts to role rl_analyst;
-GRANT SELECT ON FUTURE TABLES on schema banking_db.marts to role rl_analyst;
-GRANT SELECT ON FUTURE TABLES on schema banking_db.staging to role rl_analyst;
-GRANT SELECT ON FUTURE VIEWS ON SCHEMA banking_db.marts to role rl_analyst;
-GRANT SELECT ON FUTURE VIEWS ON SCHEMA banking_db.staging to role rl_analyst;
+GRANT SELECT ON FUTURE TABLES IN schema banking_db.marts to role rl_analyst;
+GRANT SELECT ON FUTURE TABLES IN schema banking_db.staging to role rl_analyst;
+GRANT SELECT ON FUTURE VIEWS IN SCHEMA banking_db.marts to role rl_analyst;
+GRANT SELECT ON FUTURE VIEWS IN SCHEMA banking_db.staging to role rl_analyst;
 
 
 --- create users

@@ -1,3 +1,8 @@
+USE ROLE RL_INGESTION;
+USE WAREHOUSE BANKING_WAREHOUSE;
+
+
+
 ---stage for TRANSACTIONS
 create or replace stage banking_db.RAW.transaction_stage 
 file_format= (type=csv,field_delimiter=',',skip_header=1)
