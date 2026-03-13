@@ -11,3 +11,10 @@ AS
 
 
 EXECUTE TASK insert_user ;
+
+
+CREATE OR REPLACE TASK insert_cards
+warehouse ='banking_warehouse'
+AFTER insert_user
+AS 
+    call BANKING_DB.RAW.PROC_card();
