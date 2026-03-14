@@ -28,3 +28,18 @@ AS
 EXECUTE TASK task_user ;
 EXECUTE TASK task_card;
 EXECUTE TASK task_transactions;
+
+
+-- Row count validation after initial load
+
+select
+    count(*)
+from BANKING_DB.RAW.CARDS_RAW;
+
+select
+    count(*)
+from BANKING_DB.RAW.USERS_RAW;
+
+select
+    count(*)
+from BANKING_DB.RAW.TRANSACTIONS_RAW;

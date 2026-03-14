@@ -1,3 +1,5 @@
+USE ROLE ACCOUNTADMIN;
+
 -- CREATE warehouse
 create or replace warehouse banking_warehouse
     with warehouse_size ='X-SMALL'
@@ -29,6 +31,8 @@ GRANT usage ,create pipe , create task ,create procedure, create table, create s
 GRANT select , insert on future tables in schema banking_db.RAW to role rl_ingestion;
 GRANT OPERATE ON FUTURE PIPES in schema banking_db.RAW to role rl_ingestion;
 GRANT OPERATE ON FUTURE TASKS IN SCHEMA banking_db.RAW to role rl_ingestion;
+GRANT EXECUTE TASK ON ACCOUNT TO ROLE rl_ingestion;
+GRANT USAGE ON INTEGRATION S3_banking_storage  TO ROLE rl_ingestion;
 
 --------rl_dbt
 GRANT USAGE ON WAREHOUSE banking_warehouse to role rl_dbt;
