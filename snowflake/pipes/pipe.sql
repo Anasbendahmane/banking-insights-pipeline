@@ -1,25 +1,20 @@
 -- ============================================================
--- Stored procedures for full reload of RAW tables from S3
--- Each procedure truncates the target table before loading
--- to avoid duplicates on re-run
+-- Snowpipe Configuration for automated ingestion from S3
+-- AUTO_INGEST = TRUE : requires SQS event notifications on S3
+-- Each pipe monitors its dedicated S3 folder via a stage
 -- ============================================================
 
-use role rl_ingestion;
-use warehouse banking_warehouse;
-use database banking_db;
-use schema RAW;
+USE ROLE RL_INGESTION;
+USE WAREHOUSE BANKING_WAREHOUSE;
+USE DATABASE banking_db;
+USE SCHEMA RAW;
 
--- Load users data from S3 into USERS_RAW
-CREATE OR REPLACE procedure proc_user()
-    RETURNS string
-    language sql
-    execute as caller
+
+-- Users pipe : monitors s3://banking-insights-bucket/users/
+CREATE OR REPLACE PIPE user_pipe 
+AUTO_INGEST=TRUE
 AS
-$$
-BEGIN
-
-    TRUNCATE TABLE BANKING_DB.RAW.USERS_RAW;
-    COPY INTO USERS_RAW(Person, current_age, retirement_age, birth_year, birth_month, gender, address, appartment, city, state, zipcode, latitude, longitude, PER_CAPITA_INCOME_ZIPCODE, yearly_income, total_debt, fico_score, num_credit_cards)
+        COPY INTO USERS_RAW(Person, current_age, retirement_age, birth_year, birth_month, gender, address, appartment, city, state, zipcode, latitude, longitude, PER_CAPITA_INCOME_ZIPCODE, yearly_income, total_debt, fico_score, num_credit_cards)
     from
         (select
             $1 as Person,
@@ -42,23 +37,12 @@ BEGIN
             $18 as num_credit_cards
         
         from @BANKING_DB.RAW.USERS_STAGE);
-    return 'loading ok !!';
-END;
 
-$$;
-
-
--- Load cards data from S3 into CARDS_RAW
-
-CREATE OR REPLACE PROCEDURE proc_card()
-    RETURNS string
-    LANGUAGE sql
-    EXECUTE as caller
+-- Cards pipe : monitors s3://banking-insights-bucket/cards/
+CREATE OR REPLACE PIPE card_pipe
+AUTO_INGEST=TRUE
 AS
-$$
-BEGIN
-    TRUNCATE TABLE BANKING_DB.RAW.CARDS_RAW;
-    COPY INTO BANKING_DB.RAW.CARDS_RAW(User, Card_index, Card_brand, Card_type, Card_number, Expires, CVV, Has_chip, Cards_issued, Credit_Limit, Acct_open_date, Year_pin_last_changed, Card_On_Dark_Web)
+        COPY INTO BANKING_DB.RAW.CARDS_RAW(User, Card_index, Card_brand, Card_type, Card_number, Expires, CVV, Has_chip, Cards_issued, Credit_Limit, Acct_open_date, Year_pin_last_changed, Card_On_Dark_Web)
     from(
         select
             $1 as User,
@@ -76,25 +60,13 @@ BEGIN
             $13 as Card_On_Dark_Web
 
         from @BANKING_DB.RAW.CARDS_STAGE
-
-
     );
-    Return 'load ok!!';
 
-END;
-$$;
-
--- Load transactions data from S3 into TRANSACTIONS_RAW
-CREATE OR REPLACE PROCEDURE proc_transactions()
-    RETURNS string
-    LANGUAGE sql
-    EXECUTE AS caller
-
+-- Transactions pipe : monitors s3://banking-insights-bucket/transactions/
+CREATE OR REPLACE PIPE transactions_pipe
+AUTO_INGEST=TRUE
 AS
-$$
-BEGIN
-    TRUNCATE TABLE BANKING_DB.RAW.TRANSACTIONS_RAW;
-    COPY INTO BANKING_DB.RAW.TRANSACTIONS_RAW(User, Card, Year, Month, Day, Time, Amount, Use_Chip, Merchant_Name, Merchant_City, Merchant_State, Zip, MCC, Errors, is_fraud)
+        COPY INTO BANKING_DB.RAW.TRANSACTIONS_RAW(User, Card, Year, Month, Day, Time, Amount, Use_Chip, Merchant_Name, Merchant_City, Merchant_State, Zip, MCC, Errors, is_fraud)
     FROM(
         select
             $1 as User,
@@ -116,9 +88,8 @@ BEGIN
         from @BANKING_DB.RAW.TRANSACTION_STAGE
     );
 
-    return 'load ok!!';
+-- Verify pipe configuration and SQS notification channel
 
-
-END;
-
-$$;
+DESC pipe card_pipe;
+DESC pipe user_pipe;
+DESC PIPE BANKING_DB.RAW.TRANSACTIONS_PIPE;
