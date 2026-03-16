@@ -22,7 +22,8 @@ CREATE OR REPLACE Table USERS_RAW(
     Yearly_Income string ,
     Total_Debt string,
     FICO_Score Number,
-    Num_Credit_Cards Number
+    Num_Credit_Cards Number,
+    loaded_at timestamp_ntz
 
 );
 
@@ -39,7 +40,8 @@ CREATE OR REPLACE Table CARDS_RAW(
     Credit_Limit string,
     Acct_open_date string,
     Year_pin_last_changed int,
-    Card_On_Dark_Web string
+    Card_On_Dark_Web string,
+    loaded_at timestamp_ntz
 
 
 );
@@ -59,8 +61,8 @@ CREATE OR REPLACE TABLE TRANSACTIONS_RAW(
     Zip float,
     MCC number,
     Errors string,
-    is_fraud string
+    is_fraud string,
+    loaded_at timestamp_ntz
 );
-
 
 SHOW TABLES IN SCHEMA banking_db.RAW;

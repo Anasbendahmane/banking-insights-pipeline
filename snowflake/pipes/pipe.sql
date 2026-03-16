@@ -14,7 +14,7 @@ USE SCHEMA RAW;
 CREATE OR REPLACE PIPE user_pipe 
 AUTO_INGEST=TRUE
 AS
-        COPY INTO USERS_RAW(Person, current_age, retirement_age, birth_year, birth_month, gender, address, appartment, city, state, zipcode, latitude, longitude, PER_CAPITA_INCOME_ZIPCODE, yearly_income, total_debt, fico_score, num_credit_cards)
+        COPY INTO USERS_RAW(Person, current_age, retirement_age, birth_year, birth_month, gender, address, appartment, city, state, zipcode, latitude, longitude, PER_CAPITA_INCOME_ZIPCODE, yearly_income, total_debt, fico_score, num_credit_cards,loaded_at)
     from
         (select
             $1 as Person,
@@ -34,7 +34,9 @@ AS
             $15 as yearly_income,
             $16 as total_debt,
             $17 as fico_score,
-            $18 as num_credit_cards
+            $18 as num_credit_cards,
+            METADATA$FILE_LAST_MODIFIED
+            
         
         from @BANKING_DB.RAW.USERS_STAGE);
 
@@ -42,7 +44,7 @@ AS
 CREATE OR REPLACE PIPE card_pipe
 AUTO_INGEST=TRUE
 AS
-        COPY INTO BANKING_DB.RAW.CARDS_RAW(User, Card_index, Card_brand, Card_type, Card_number, Expires, CVV, Has_chip, Cards_issued, Credit_Limit, Acct_open_date, Year_pin_last_changed, Card_On_Dark_Web)
+            COPY INTO BANKING_DB.RAW.CARDS_RAW(User, Card_index, Card_brand, Card_type, Card_number, Expires, CVV, Has_chip, Cards_issued, Credit_Limit, Acct_open_date, Year_pin_last_changed, Card_On_Dark_Web,loaded_at)
     from(
         select
             $1 as User,
@@ -57,16 +59,17 @@ AS
             $10 as Credit_Limit,
             $11 as Acct_open_date,
             $12 as Year_pin_last_changed,
-            $13 as Card_On_Dark_Web
+            $13 as Card_On_Dark_Web,
+            METADATA$FILE_LAST_MODIFIED
 
         from @BANKING_DB.RAW.CARDS_STAGE
     );
-
 -- Transactions pipe : monitors s3://banking-insights-bucket/transactions/
+
 CREATE OR REPLACE PIPE transactions_pipe
 AUTO_INGEST=TRUE
 AS
-        COPY INTO BANKING_DB.RAW.TRANSACTIONS_RAW(User, Card, Year, Month, Day, Time, Amount, Use_Chip, Merchant_Name, Merchant_City, Merchant_State, Zip, MCC, Errors, is_fraud)
+         COPY INTO BANKING_DB.RAW.TRANSACTIONS_RAW(User, Card, Year, Month, Day, Time, Amount, Use_Chip, Merchant_Name, Merchant_City, Merchant_State, Zip, MCC, Errors, is_fraud,loaded_at)
     FROM(
         select
             $1 as User,
@@ -83,7 +86,8 @@ AS
             $12 as Zip,
             $13 as MCC,
             $14 as Errors,
-            $15 as is_fraud
+            $15 as is_fraud,
+            METADATA$FILE_LAST_MODIFIED
 
         from @BANKING_DB.RAW.TRANSACTION_STAGE
     );
