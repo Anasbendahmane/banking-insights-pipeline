@@ -6,5 +6,26 @@ sources:
       schema: RAW
       tables:
         - name: USERS_RAW
+          config:
+            freshness:
+              warn_after:
+                count: 24
+                period: hour
+            loaded_at_field : loaded_at
         - name: CARDS_RAW
+          config:
+            freshness:
+              warn_after:
+                count: 24
+                period: hour
+            loaded_at_field: loaded_at
         - name: TRANSACTIONS_RAW
+          config:
+            freshness:
+                warn_after:
+                  count: 10
+                  period: hour
+                error_after:
+                  count: 16
+                  period: hour
+            loaded_at_field: loaded_at
