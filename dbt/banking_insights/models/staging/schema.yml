@@ -1,0 +1,140 @@
+version: 2
+
+models:
+    - name: stg_user
+      columns:
+        - name: user_id
+          description: 'Unique user identifier'
+          data_tests:
+            - unique
+            - not_null
+
+        - name: full_name
+          description: 'User full name in lowercase'
+          data_tests:
+            - not_null
+
+        - name: age
+
+        - name: retirement_age
+
+        - name: birth_year
+
+        - name: birth_month
+
+        - name: gender
+          description: 'User gender (F or M)'
+          data_tests:
+            - accepted_values:
+                arguments:
+                    values: ['F', 'M']
+                config:
+                    severity: warn
+
+        - name: city
+          description: 'User city'
+
+        - name: state
+          description: 'User state'
+
+        - name: zipcode
+          description: 'User zipcode'
+
+        - name: latitude
+          description: 'User latitude coordinate'
+
+        - name: longitude
+          description: 'User longitude coordinate'
+
+        - name: per_capita_income_zipcode
+          description: 'Per capita income in user zipcode'
+
+        - name: yearly_income
+          description: 'User annual income in dollars'
+          data_tests:
+            - is_positive:
+                config:
+                    severity: error
+
+        - name: total_debt
+          description: 'User total debt in dollars'
+          data_tests:
+            - is_positive:
+                config:
+                    severity: error
+
+        - name: fico_score
+          description: 'User credit score'
+          data_tests:
+            - not_null
+
+        - name: num_credits_cards
+          description: 'Number of credit cards owned by user'
+
+        - name: loaded_at
+          description: 'Data load timestamp'
+
+    
+    - name: stg_card
+      columns:
+        - name: card_id
+          description: 'Unique card identifier'
+          data_tests:
+            - unique
+            - not_null
+
+        - name: user_id
+
+        - name: card_index
+
+        - name: card_brand
+          data_tests:
+            - accepted_values:
+                arguments:
+                    values: ['Mastercard', 'Visa', 'Discover', 'Amex']
+
+        - name: card_type
+          data_tests:
+            - accepted_values:
+                arguments:
+                    values: ['Debit', 'Debit (Prepaid)', 'Credit']
+
+        - name: card_number
+    
+
+        - name: expires
+          description: 'Card expiration date'
+
+        - name: CVV
+          description: 'Card security code'
+          data_tests:
+            - not_null
+
+        - name: has_chip
+          description: 'Whether the card has a chip'
+          data_tests:
+            - not_null
+
+        - name: cards_issued
+          description: 'Number of cards issued'
+
+        - name: credit_limit
+          description: 'Card credit limit in dollars'
+          data_tests:
+            - is_positive:
+                config:
+                    severity: warn
+
+        - name: acct_open_date
+          description: 'Account opening date'
+
+        - name: year_pin_last_changed
+          description: 'Year when PIN was last changed'
+
+        - name: card_on_dark_web
+          description: 'Whether the card has been compromised on dark web'
+          data_tests:
+            - not_null
+
+        - name: loaded_at
+          description: 'Data load timestamp'
