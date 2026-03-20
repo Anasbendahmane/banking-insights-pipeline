@@ -138,3 +138,23 @@ models:
 
         - name: loaded_at
           description: 'Data load timestamp'
+    - name: stg_transaction
+      columns:
+        - name: card_id
+          data_tests:
+            - not_null
+        - name: user_id
+          data_tests:
+            - not_null
+        - name: transaction_date
+          data_tests:
+            - not_null
+        - name: amount
+          data_tests:
+            - is_positive:
+                config:
+                    severity: warn 
+        
+        - name: is_fraud
+          data_tests:
+            - not_null
