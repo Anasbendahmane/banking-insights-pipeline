@@ -31,7 +31,7 @@ with source as (
     from cte_card
 )
 
-SELECT distinct
-    card_type
+SELECT
+    *
 FROM final_cte
 --where Card_brand is null or Card_type is null
