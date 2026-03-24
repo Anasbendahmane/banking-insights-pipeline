@@ -1,0 +1,83 @@
+version: 2
+
+models:
+    - name: int_transaction_enriched
+      description: "Enriched transaction data with customer and card information"
+      columns:
+        - name: card_id
+          data_tests:
+            - not_null
+        - name: transaction_timestamp
+          data_tests:
+            - valid_timestamp
+        - name: transaction_category
+          data_tests:
+            - accepted_values:
+                arguments:
+                    values: ['Purchase','Refund','Neutral']
+        - name: MCC
+          description: "Merchant category core"
+          data_tests:
+            - not_null
+        - name: amount
+          data_tests:
+            - not_null
+
+
+    - name: int_customers_metrics
+      description: "Customer spending and fraud metrics"
+
+      columns:
+        - name: user_id
+          data_tests:
+            - unique
+            - not_null:
+                config:
+                    severity: error
+        - name: total_transactions
+          data_tests:
+            - is_positive
+        
+        - name: total_spent
+          data_tests:
+            - is_positive
+        - name: avg_transaction_amount
+          data_tests:
+            - not_null
+        - name: fraud_rate
+          description: "Percentage of fraudulent transactions"
+          data_tests:
+            - not_null
+        - name: first_transaction_date
+          data_tests:
+            - valid_timestamp
+        
+        - name: last_transaction_date
+          data_tests:
+            - valid_timestamp
+
+    - name: int_merchant_metrics
+      description: "Merchant transaction and fraud metrics"
+      columns:
+        - name: merchant_id
+          data_tests:
+            - not_null
+        - name: MCC
+          data_tests:
+            - not_null
+        - name: total_transactions
+          data_tests:
+            - not_null
+            - is_positive
+        - name: fraud_rate
+          description: "Percentage of fraudulent transactions"
+          data_tests:
+            - not_null
+
+        - name: first_transaction_date
+          data_tests:
+            - valid_timestamp
+        
+        - name: last_transaction_date
+          data_tests:
+            - valid_timestamp

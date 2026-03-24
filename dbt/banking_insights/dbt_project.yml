@@ -37,3 +37,8 @@ models:
     marts:
       +materialized: table
       +schema: marts
+
+
+seeds:
+  banking_insights:
+    +schema: staging

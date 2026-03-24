@@ -36,6 +36,12 @@ with cte_source as(
         transaction_date,
         to_timestamp(transaction_date||' '||cast(time as time), 'YYYY-MM-DD HH24:MI:SS') as transaction_timestamp,
         amount,
+        CASE
+            when amount > 0 then 'Purchase'
+            when  amount = 0 then 'Neutral'
+            when amount < 0 then 'Refund'
+        END as transaction_category,
+
         transaction_type,
         merchant_id,
         merchant_city,
