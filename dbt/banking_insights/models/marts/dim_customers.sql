@@ -3,7 +3,6 @@
 -- Description: Complete customer profile with segmentation
 --              and risk assessment based on financial metrics,
 --              spending behavior and fraud history.
--- Source: stg_users + int_customer_metrics
 -- =============================================================
 
 
