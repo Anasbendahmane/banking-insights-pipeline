@@ -16,7 +16,7 @@ with cte_merchant as(
 
 ),cte_merchant2 as (
 
-    select
+    select 
         merchant_id,
         CASE 
             WHEN merchant_state = 'N/A' THEN 'true'
@@ -24,6 +24,8 @@ with cte_merchant as(
         END as is_merchant_online
 
     from {{ ref('int_transaction_enriched') }}
+    qualify row_number() over(partition by merchant_id order by merchant_id) = 1
+
 
 
 ),cte_join as(
