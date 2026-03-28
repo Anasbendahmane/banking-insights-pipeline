@@ -1,0 +1,101 @@
+version: 2
+
+models:
+  - name: dim_merchant
+    description: "Merchant dimension enriched with risk classification and online/offline flag"
+    columns:
+      - name: merchant_id
+        description: "Unique merchant identifier"
+        data_tests:
+          - unique
+          - not_null
+      - name: is_merchant_online
+        description: "Flag indicating if merchant operates online"
+      - name: total_spent
+        description: "Total purchase amount"
+      - name: total_refund
+        description: "Total refund amount"
+      - name: fraud_rate
+        description: "Percentage of fraudulent transactions (0-100)"
+      - name: risk_level
+        description: "Risk classification: High Risk, Medium Risk, Low Risk"
+
+  - name: dim_customers
+    description: "Complete customer profile with financial segmentation and risk metrics"
+    columns:
+      - name: user_id
+        data_tests:
+          - unique
+          - not_null
+      - name: income_segment
+        description: "Income bracket classification (Low, Medium, High)"
+      - name: debt_income_ratio
+        description: "Debt to annual income ratio"
+      - name: fico_score
+        description: "FICO credit score (300-850)"
+      - name: fico_category
+        description: "Credit risk category based on FICO"
+      - name: fraud_rate
+        description: "Percentage of fraudulent transactions"
+
+  - name: dim_date
+    description: "Date dimension for temporal attributes"
+    columns:
+      - name: date_day
+        data_tests:
+          - unique
+          - not_null
+      - name: saison
+        description: "Season classification"
+
+  - name: fact_transactions
+    description: "All credit card transactions with enriched merchant and customer information"
+    columns:
+      - name: transaction_id
+        description: "Unique transaction identifier (surrogate key)"
+        data_tests:
+          - unique
+          - not_null
+      - name: is_high_value
+        description: "High Value (>500) or Normal Value"
+      - name: is_fraud
+        description: "Fraud flag (true/false)"
+
+  - name: fact_fraud_over_time
+    description: "Monthly fraud trends with growth rate and cumulative counts"
+    columns:
+      - name: fraud_count_lag
+        description: "Fraud count from previous month"
+      - name: cumul_fraud_per_year
+        description: "Cumulative fraud count from start of year"
+      - name: variation_fraud_monthly
+        description: "Month-over-month change in fraud count"
+      - name: fraud_rate
+        description: "Percentage of fraudulent transactions"
+
+  - name: fact_customer_risk_score
+    description: "Customer risk assessment combining multiple dimensions"
+    columns:
+      - name: user_id
+        data_tests:
+          - unique
+          - not_null
+      - name: risk_segment
+        description: "Risk quartile (1=lowest, 4=highest) based on fraud rate"
+      - name: fico_risk
+        description: "Rank by FICO score (lower=higher risk)"
+      - name: debt_risk
+        description: "Rank by debt-to-income ratio (higher=higher risk)"
+
+
+  - name: fact_merchant_risk
+    description: "Merchant risk ranking with fraud metrics and volume analysis"
+    columns:
+      - name: merchant_id
+        data_tests:
+          - unique
+          - not_null
+      - name: fraud_rate_rnk
+        description: "Rank by fraud rate (1=highest fraud rate)"
+      - name: fraud_volume_rank
+        description: "Rank by total fraud transaction count"
