@@ -3,7 +3,7 @@ banking_insights:
     dev:
       account: DUTFEHS-EM46938
       database: banking_db
-      password: Anasbendahmen001$
+      password: *********
       role: rl_dbt
       schema: raw
       threads: 2
