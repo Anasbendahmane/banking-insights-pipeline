@@ -8,21 +8,30 @@
 
 
 with cte_time as(
-    select
-        *
-    from {{ ref('fact_transactions') }}
+    SELECT
+        d.year,
+        d.month,
+        d.month_short_name,
+        d.saison,
+        f.*
+
+    from {{ ref('fact_transactions') }} as f
+    left join {{ ref('dim_date') }} as d on d.date_day = f.transaction_date
 ),cte_calcul as (
 
 
     select
-        date_part(year,transaction_date) as year,
-        date_part(month,transaction_date) as month,
+
+        year,
+        month,
+        month_short_name,
+        saison,
         count(case when is_fraud ='true' then 1 else null end) as fraud_count,
         count(*) as total_transactions
 
     from cte_time
-    group by date_part(year,transaction_date) ,date_part(month,transaction_date)
-    order by date_part(year,transaction_date) ,date_part(month,transaction_date)
+    group by year,month,month_short_name,saison
+    order by year,month
 
 ),cte_calcul1 as (
 
