@@ -41,7 +41,8 @@ banking-insights-pipeline/
 ## 🏗️ Architecture
 
 
-<img width="1598" height="704" alt="image" src="https://github.com/user-attachments/assets/8242e131-535a-4984-902a-19da878b6f5d" />
+
+<img width="1615" height="727" alt="image" src="https://github.com/user-attachments/assets/9963edf0-aefc-4251-af2e-7fe37577a286" />
 
 
 
